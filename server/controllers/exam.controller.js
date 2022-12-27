@@ -2,9 +2,10 @@ const e = require('express');
 const { response } = require('express');
 const mongoose = require('mongoose');
 const Exam = mongoose.model('Exam');
+const User = mongoose.model('User');
 const multer = require('multer');
 const Notification = mongoose.model('Notification');
-
+const _ = require('lodash');
 
 
 module.exports.create = (req, res, next) => {
@@ -14,8 +15,17 @@ module.exports.create = (req, res, next) => {
     exam.startTime = req.body.startTime;
     exam.duration = req.body.duration;
     exam.examDate = req.body.examDate;
-    exam.teacherID = req.body.teacherID;
-    exam.teacherName = req.body.teacherName;
+    exam.teacherID = req._id;
+    // User.findOne({ _id: req._id },
+    //     (err, user) => {
+    //         if(!user)
+    //             return res.status(404).json({ status: false, message: "User record not found." });
+    //         else
+    //             //return res.status(200).json({ status: true, user: _.pick(user, ['_id','fullName', 'email', 'isTeacher', 'institute', 'phone_number', 'batch', 'roll', 'designation']) });
+    //             exam.teacherName = user.fullName
+    //     }
+    // );
+    exam.teacherName = req.fullName;
     exam.participants = [];
     exam.notification = [];
     exam.answer = [];
@@ -36,7 +46,7 @@ module.exports.create = (req, res, next) => {
 }
 
 module.exports.retrieve = (req, res, next) => {
-    Exam.find({ teacherID: req.params.id }, (err, doc) =>{
+    Exam.find({ teacherID: req._id }, (err, doc) =>{
         if(!err) res.send(doc);
         else {
             console.log(`Error in exam retrive: `+ JSON.stringify(err, undefined, 2));
@@ -82,14 +92,24 @@ module.exports.updateInfo = (req, res, next) => {
     if(req.body.outSightTime == 'undefined'){
         req.body.outSightTime = tempOutSightTime;
     }
+    // var user = new User();
+    // User.findOne({ _id: req._id },
+    //     (err, userr) => {
+    //         if(!userr)
+    //             return res.status(404).json({ status: false, message: "User record not found." });
+    //         else
+    //             //return res.status(200).json({ status: true, user: _.pick(user, ['_id','fullName', 'email', 'isTeacher', 'institute', 'phone_number', 'batch', 'roll', 'designation']) });
+    //             user = userr
+    //     }
+    // );
     var exam = {
         examName: req.body.examName,
         participants: req.body.participants,
         startTime: req.body.startTime,
         duration: req.body.duration,
         examDate: req.body.examDate,
-        teacherID: req.body.teacherID,
-        teacherName: req.body.teacherName,
+        teacherID: req._id,
+        teacherName: req.fullName,
         question : tempQuestion,
         answer: tempAnswer,
         outSightTime: req.body.outSightTime
@@ -111,10 +131,10 @@ module.exports.deleteExam = (req, res, next) => {
 }
 
 module.exports.joinExam = (req, res, next) => {
-    var userID = req.body.userID;
+    var userID = req._id;
     Exam.findById(req.params.id, (err, document) =>{
         if(!err){
-            console.log('document bloced: ', document.blocked)
+            //console.log('document bloced: ', document.blocked)
             if(document.blocked.indexOf(userID)>-1){
                 res.send('user blocked')
             }else{
@@ -132,7 +152,7 @@ module.exports.joinExam = (req, res, next) => {
 
 module.exports.removeParcipant = (req, res, next) => {
     var userID = req.body.userID;
-    Exam.findByIdAndUpdate(req.params.id, {$pull: {participants: {$in: [req.body.userID]}}}, {new:true}, (err, doc) =>{
+    Exam.findByIdAndUpdate(req.params.id, {$pull: {participants: {$in: [req._id]}}}, {new:true}, (err, doc) =>{
         if(!err) {
             Exam.findByIdAndUpdate(req.params.id,  {$addToSet: {blocked: userID}}, {new:true}, (error, document) => {
                 if(!error){
@@ -150,35 +170,48 @@ module.exports.removeParcipant = (req, res, next) => {
 
 module.exports.addEvidence = (req, res, next) => {
     const url = req.protocol + '://' + req.get('host');
-    var notification = new Notification();
-    notification.fullName = req.body.fullName;
-    notification.email = req.body.email;
-    notification.institute = req.body.institute;
-    notification.roll = req.body.roll;
-    notification.phone_number = req.body.phone_number;
-    notification.time = Date.now;
-    notification.message = req.body.message;
-    if(req.body.screenRecord == '' && req.body.cameraRecord == ''){
-        notification.cameraRecord = '';
-        notification.screenRecord = '';
-    }
-    else if(req.body.screenRecord != ''){
-        notification.screenRecord = url + '/public/' + req.file.filename;
-        notification.cameraRecord = '';
-    }
-    else {
-        notification.screenRecord = '';
-        notification.cameraRecord = url + '/public/' + req.file.filename;
-    }
-    if(notification.message != 'undefined')
-        Exam.findByIdAndUpdate(req.params.id, {$push: {notification: notification}}, {new:true}, (err, doc) => {
-            if(!err) {
-                console.log(notification)
-                res.send(doc);}
+    var user = new User();
+    User.findOne({ _id: req._id },
+        (err, userr) => {
+            if(!userr)
+                return res.status(404).json({ status: false, message: "User record not found." });
             else{
-                console.log(`Error in add evidence: `+ JSON.stringify(err, undefined, 2));
-            }
-        })
+                //return res.status(200).json({ status: true, user: _.pick(user, ['_id','fullName', 'email', 'isTeacher', 'institute', 'phone_number', 'batch', 'roll', 'designation']) });
+                user = userr
+                var notification = new Notification();
+                notification.fullName = req.fullName;
+                notification.email = req.email;
+                notification.institute = user.institute;
+                notification.roll = user.roll;
+                notification.phone_number = user.phone_number;
+                notification.time = Date.now;
+                notification.message = req.body.message;
+                if(req.body.screenRecord == '' && req.body.cameraRecord == ''){
+                    notification.cameraRecord = '';
+                    notification.screenRecord = '';
+                }
+                else if(req.body.screenRecord != ''){
+                    notification.screenRecord = url + '/public/' + req.file.filename;
+                    notification.cameraRecord = '';
+                }
+                else {
+                    notification.screenRecord = '';
+                    if(req.file)
+                        notification.cameraRecord = url + '/public/' + req.file.filename;
+                }
+                if(notification.message != 'undefined')
+                    Exam.findByIdAndUpdate(req.params.id, {$push: {notification: notification}}, {new:true}, (err, doc) => {
+                        if(!err) {
+                            console.log(notification)
+                            res.send(doc);}
+                        else{
+                            console.log(`Error in add evidence: `+ JSON.stringify(err, undefined, 2));
+                        }
+                    })
+            }                
+        }
+    );
+    
 }
 
 module.exports.getNotification = (req, res, next) => {

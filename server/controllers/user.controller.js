@@ -16,6 +16,7 @@ let transporter = nodemailer.createTransport({
 })
 
 module.exports.register = (req, res, next) => {
+    console.log("called")
     var user = new User();
     user.fullName = req.body.fullName;
     user.email = req.body.email;
@@ -30,7 +31,7 @@ module.exports.register = (req, res, next) => {
     user.save( 
         (err, doc) =>{
         if(!err){
-            sendOTPVerificationEmail(doc, res)
+            res.status(200).send(['Registration Successful']);
         }
         else{
             if(err.code == 11000)
