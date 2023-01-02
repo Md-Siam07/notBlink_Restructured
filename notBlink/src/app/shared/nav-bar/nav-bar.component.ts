@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../auth/services/auth.service';
+import { AuthService } from '../../auth/services/auth.service';
 import { Router } from '@angular/router';
 import { reduce } from 'rxjs';
-import { User } from '../shared/models/user.model';
+import { User } from '../models/user.model';
 @Component({
   selector: 'app-nav-bar',
   templateUrl: './nav-bar.component.html',
@@ -10,7 +10,7 @@ import { User } from '../shared/models/user.model';
 })
 export class NavBarComponent implements OnInit {
 
-  userDetails = new User();
+  //userDetails = new User();
   userid: string = "";
   isCollapsed: boolean = true;
 

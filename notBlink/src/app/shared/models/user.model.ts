@@ -1,13 +1,16 @@
 export class User {
-    _id: string = "";
-    fullName: string = "";
-    email: string = "";
-    password: string = "";
-    institute: string= "";
-    phone_number: string = "";
-    designation: string = "";
-    batch!: number;
-    roll!: number ;
-    verified: Boolean = false;
-    isTeacher: boolean = false; 
+    constructor(
+        public _id?: string,
+        public email?: string,
+        public fullName?: string,
+        public password?: string,
+        public institute?: string,
+        public phone_number?: string,
+        public designation?: string,
+        public batch?: number,
+        public roll?: number,
+        public verified?: Boolean,
+        public isTeacher?: Boolean
+    ){}
+
 }

@@ -5,6 +5,9 @@
       </div>
           <h3 class="text-darkgreen">Sign In</h3>
           <br>
+      <div *ngIf="isLoading" style="text-align: center;">
+          <app-loading-spinner></app-loading-spinner>
+      </div>
       <div class="container-content">
           <form class="margin-t" #authForm="ngForm" (ngSubmit)="onSubmit(authForm)" *ngIf="!isLoading">
               <div class="form-group mb-3">
