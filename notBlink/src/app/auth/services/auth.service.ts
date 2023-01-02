@@ -9,5 +9,6 @@ import { User } from 'src/app/shared/models/user.model';
 })
 export class AuthService {
 
-  constructor() { }
+  constructor( private http: HttpClient ) { }
+
 }

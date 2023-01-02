@@ -8,7 +8,7 @@ import { NgForm } from '@angular/forms';
 })
 export class LoginComponent implements OnInit{
   ngOnInit(): void {
-    console.log('login called')
+    
   }
   isLoading = false;
   error: string = "";
