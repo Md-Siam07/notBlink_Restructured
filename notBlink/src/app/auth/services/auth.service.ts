@@ -17,7 +17,7 @@ export class AuthService {
 
   loginStatus$ = new BehaviorSubject<boolean>(false);
   user$ = new BehaviorSubject<User | null>(null);
-  token$ = new BehaviorSubject<string>('');
+  token$ = new BehaviorSubject<string | null>(null);
 
   noAuthHeader = { headers: new HttpHeaders({ 'NoAuth': 'True' }) };
   
@@ -33,6 +33,7 @@ export class AuthService {
 
   deleteToken(){
     localStorage.removeItem('token');
+    this.token$.next(null);
   }
 
   getUserPayload(){
@@ -55,7 +56,11 @@ export class AuthService {
   }
 
   signUP(user: User){
-     //this.http.post
+    return  this.http.post(
+      environment.apiUrl + 'register',
+      user,
+      this.noAuthHeader
+     );
   }
 
   login(email:string, password: string) {

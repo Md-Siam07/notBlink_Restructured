@@ -8,7 +8,7 @@ import { RoutePath } from '../shared/enums/route-path';
 
 const routes: Routes = [
   {
-    path:'',
+    path: RoutePath.Auth,
     component: AuthComponent,
     children: [
       {

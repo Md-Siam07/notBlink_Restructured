@@ -1,1 +1,147 @@
-<p>register works!</p>
+<div class=" main-bg">
+    <div class="login-container text-c animated flipInX">
+      <div>
+          <h1 class="logo-badge text-user"><span class="fa fa-user-circle"></span></h1>
+      </div>
+          <h3 class="text-darkgreen">Register</h3>
+          <br>
+      <div *ngIf="isLoading" style="text-align: center;">
+          <app-loading-spinner></app-loading-spinner>
+      </div>
+      <div class="container-content">
+          <form class="margin-t" #regForm="ngForm" (ngSubmit)="onSubmit(regForm)" *ngIf="!isLoading">
+            
+            <div class="mb-3 form-group-middle">
+                <input type="radio"
+                    value="false" 
+                    class="btn-check" 
+                    name="isTeacher"
+                    id="warning-outlined"
+                    checked
+                    (click)="changeType(false)"
+                    autocomplete="off"
+                    >
+                <label class="btn btn-outline-primary radio-button" for="warning-outlined">I am a student</label>
+
+                <input 
+                    type="radio" 
+                    value="true" 
+                    class="btn-check" 
+                    name="isTeacher" 
+                    (click)="changeType(true)" 
+                    id="danger-outlined" 
+                    autocomplete="off">
+                <label class="btn btn-outline-primary radio-button" for="danger-outlined">I am a teacher</label>
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="text-darkgreen">FULL NAME</label>
+                <!-- <input type="email" name="email" class="form-control" placeholder="Email Address" required="" #email="ngModel" [(ngModel)]="this.model.email" [ngModelOptions]="{standalone: true}"> -->
+                <input
+                    type="text"
+                    id="fullName"
+                    class="form-control"
+                    ngModel
+                    name="fullName"
+                    required
+                    placeholder="Your name"
+                />
+            </div>
+
+            <div class="form-group mb-3">
+                <label class="text-darkgreen">EMAIL ADDRESS</label>
+                <!-- <input type="email" name="email" class="form-control" placeholder="Email Address" required="" #email="ngModel" [(ngModel)]="this.model.email" [ngModelOptions]="{standalone: true}"> -->
+                <input
+                    type="email"
+                    id="email"
+                    class="form-control"
+                    ngModel
+                    name="email"
+                    required
+                    placeholder="Your email"
+                />
+            </div>
+
+            <div class="form-group mb-3" *ngIf="!isTeacher">
+                <label class="text-darkgreen">BATCH</label>
+                <!-- <input type="email" name="email" class="form-control" placeholder="Email Address" required="" #email="ngModel" [(ngModel)]="this.model.email" [ngModelOptions]="{standalone: true}"> -->
+                <input
+                    type="number"
+                    id="batch"
+                    class="form-control"
+                    ngModel
+                    name="batch"
+                    required
+                    placeholder="11"
+                />
+            </div>
+
+            <div class="form-group mb-3" *ngIf="!isTeacher">
+                <label class="text-darkgreen">ROLL</label>
+                <!-- <input type="email" name="email" class="form-control" placeholder="Email Address" required="" #email="ngModel" [(ngModel)]="this.model.email" [ngModelOptions]="{standalone: true}"> -->
+                <input
+                    type="number"
+                    id="roll"
+                    class="form-control"
+                    ngModel
+                    name="roll"
+                    required
+                    placeholder="11"
+                />
+            </div>
+            
+            
+            <div class="form-group mb-3" *ngIf="isTeacher">
+                <label class="text-darkgreen">DESINGNATION</label>
+                <!-- <input type="email" name="email" class="form-control" placeholder="Email Address" required="" #email="ngModel" [(ngModel)]="this.model.email" [ngModelOptions]="{standalone: true}"> -->
+                <input
+                    type="text"
+                    id="designation"
+                    class="form-control"
+                    ngModel
+                    name="designation"
+                    required
+                    placeholder="Your name"
+                />
+            </div>
+
+            <div class="form-group mb-4">
+                <label class="text-darkgreen left">PASSWORD</label>
+                <input
+                    type="password"
+                    id="password"
+                    class="form-control"
+                    ngModel
+                    name="password"
+                    required
+                    minlength="6"
+                    placeholder="******"
+                />
+            </div>
+
+            <div class="form-group mb-4">
+                <label class="text-darkgreen left">CONFIRM PASSWORD</label>
+                <input
+                    type="password"
+                    id="cpassword"
+                    class="form-control"
+                    ngModel
+                    name="cpassword"
+                    required
+                    minlength="6"
+                    placeholder="******"
+                />
+            </div>
+
+            <div class="alert" *ngIf="serverErrorMessages">
+                {{serverErrorMessages}}
+            </div>
+
+            <button type="submit" class="btn btn-light form-button button-l margin-b btn-h" style="border: none;" [disabled]="!regForm.valid || (regForm.value.password !== regForm.value.cpassword) ">Register</button>
+            <p class="text-whitesmoke text-center"><small>Already have an account? </small>
+            <a href="" class="text-darkgreen" routerLink="../login"><small >Login</small></a></p>
+        </form>
+        <p class="margin-t text-darkgreen"><small> <b> Copyright &copy; 2022 !Blink </b> </small> </p>
+    </div>
+  </div>
+  </div>
